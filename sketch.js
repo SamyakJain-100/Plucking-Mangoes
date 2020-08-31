@@ -1,104 +1,119 @@
+
 const Engine = Matter.Engine;
-const World= Matter.World;
+const World = Matter.World;
 const Bodies = Matter.Bodies;
-const Constraint = Matter.Constraint;
+const Body = Matter.Body;
+const Constraint  = Matter.Constraint;
 
+var tree, treeImg, boy, boyImg;
+var BGimg;
 
-var engine, world;
-var box,ground,bar1,bar2,bar3,barImage,rope;
-
-function setup(){
-    var canvas = createCanvas(1536,700);
-    engine = Engine.create();
-    world = engine.world;
-
-    
-    box = new Box(150,400,75,75);
-    ground = new Ground2(1536/2,698,1536,40);
-    base1 = new Ground2(650,600,300,20);
-    base2 = new Ground2(1150,350,170,20);
-   // invisibleGround = new Ground2(1536/2,677,1536,30);
-
-    block1 = new Block(550,558,40,60);
-    block2 = new Block(590,558,40,60);
-    block3 = new Block(630,558,40,60);
-    block4 = new Block(670,558,40,60);
-    block5 = new Block(710,558,40,60);
-    block6 = new Block(750,558,40,60);
-
-    block11 = new Block2(590,498,40,60); 
-    block12 = new Block2(630,498,40,60); 
-    block13 = new Block2(670,498,40,60); 
-    block14 = new Block2(710,498,40,60); 
-    //block15 = new Block2(750,498,40,60); 
-
-    block22 = new Block3(630,438,40,60);
-    block23 = new Block3(670,438,40,60);
-
-    block24 = new Block(650,378,40,60);
-
-    blockl2 = new Block(1110,308,40,60);
-    blockl1 = new Block(1150,308,40,60);
-    blockl3 = new Block(1190,308,40,60);
-
-    blockl11 = new Block3(1130,248,40,60);
-    blockl12 = new Block3(1170,248,40,60);
-
-    blockl21 = new Block2(1150,188,40,60);
-    
-    rope = new launcher(box.body,{x:150,y:350});
-    rope.shapeColor="green";
-}  
-
-function draw(){
-    background(55,43,43);
-    Engine.update(engine);
-    box.display();
-    ground.display();
-    base1.display();
-    base2.display();
-
-    block1.display();
-    block2.display();
-    block3.display();
-    block4.display();
-    block5.display();
-    block6.display();
-
-    block11.display();
-    block13.display();
-    block14.display();
-    
-    block12.display();
-
-    block22.display();
-    block23.display();
-
-    block24.display();
-    
-   blockl2.display();
-   blockl1.display();
-   blockl3.display();
-   
-   blockl11.display();
-   blockl12.display();
-
-   blockl21.display();
-
-   rope.display();
+function preload()
+{
+ treeImg = loadImage("tree.png");
+ boyImg = loadImage("boy.png");
+ BGimg = loadImage("Background.jpg")
 }
 
-function mouseDragged(){
-    Matter.Body.setPosition(box.body, {x: mouseX , y: mouseY});
+function setup()
+ {
+	createCanvas(1000, 600);
+
+	engine = Engine.create();
+	world = engine.world;
+    
+	//Create the Bodies Here.
+    tree = createSprite(750,350,20,20);
+	tree.addImage(treeImg);
+	tree.scale = 0.4;
+
+    boy = createSprite(200,525,20,20);
+	boy.addImage(boyImg);
+	boy.scale = 0.1;
+	
+	ground = new Ground(500,590,1000,20);
+  stone = new Stone(200,200,70);
+	string = new Launcher(stone.body,{x:145, y:470});
+	mango1 = new Mango(700,250,60);
+	mango2 = new Mango(760,200,60);
+	mango3 = new Mango(800,340,60);
+	mango4 = new Mango(675,350,60);
+	mango5 = new Mango(900,350,60);
+	mango6 = new Mango(870,250,60);
+	mango7 = new Mango(550,300,60);
+	mango8 = new Mango(800,150,60);
+	
+	
+	Engine.run(engine);
+  
 }
 
 
-function mouseReleased(){
-    rope.fly();
+function draw() 
+{
+  rectMode(CENTER);
+  background(BGimg);
+
+  drawSprites();
+  mango1.display();
+  mango2.display();
+  mango3.display();
+  mango4.display();
+  mango5.display();
+  mango6.display();
+  mango7.display();
+  mango8.display();
+  string.display();
+  ground.display();
+  stone.display();  
+
+  detectCollision(stone,mango1);
+  detectCollision(stone,mango2);
+  detectCollision(stone,mango3);
+  detectCollision(stone,mango4);
+  detectCollision(stone,mango5);
+  detectCollision(stone,mango6);
+  detectCollision(stone,mango7);
+  detectCollision(stone,mango8);
+
+textSize(18);
+textFont("Georgia");
+textStyle(BOLD);
+text("Press space to get a one more chance to play!!",10,20);
+
+}
+
+
+function mouseDragged()
+{
+ Matter.Body.setPosition(stone.body, {x:mouseX, y:mouseY});
+}
+
+function mouseReleased()
+{
+ string.fly();
+}
+
+function detectCollision(lstone, lmango)
+{
+ mangoBodyPosition = lmango.body.position
+ stoneBodyPosition = lstone.body.position
+
+  var distance = dist(stoneBodyPosition.x, stoneBodyPosition.y,mangoBodyPosition.x, mangoBodyPosition.y)
+  
+  if(distance<=lmango.r+lstone.r)
+  {
+	  Matter.Body.setStatic(lmango.body, false);
+  }
+
 }
 
 function keyPressed(){
-    if(keycode === space){
-        rope.attach(box);
-    }
+	if(keyCode === 32)
+	{
+		Matter.Body.setPosition(stone.body,{x:235, y:420})
+		string.attach(stone.body);
+  }
+  
+  
 }
